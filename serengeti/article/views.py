@@ -1,6 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator
 from .forms import ArticleForm
 from .models import Article
+
+def home(request):
+    article = Article.objects.all()
+    paginator = Paginator(article, 3)
+    page_number = request.GET.get("page")
+    page_obg = paginator.get_page(page_number)
+    return render(request, 'index.html', {'articles': article})
 
 def new(request):
     form = ArticleForm()
@@ -38,9 +46,7 @@ def edit(request, id):
 
     return render(request, 'edit.html', {'form' : form, 'article':article})
 
-def destory(request, id):
+def destroy(request, id):
     article = get_object_or_404(Article, pk=id)
-
     article.delete()
-
     return redirect('main:index')

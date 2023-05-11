@@ -1,30 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    메인페이지 <br>
+  </head>
+  <body>
+    <h1>메인페이지</h1>
 
     {% if user.is_authenticated %}
     <a href="{% url 'user:signout' %}">로그아웃</a>
+    <br>
     <a href="{% url 'article:new' %}">글 작성</a>
     {% else %}
-    <a href="{% url 'user:signin' %}">로그인</a> <br>
-    <a href="{% url 'user:signup' %}">회원가입</a> <br>
+    <a href="{% url 'user:signin' %}">로그인</a> <br />
+    <a href="{% url 'user:signup' %}">회원가입</a> <br />
     {% endif %}
 
-    <hr>
-    {% for article in articles %}
+    <hr />
+
     <div>
-        {{article.title}}
-        {{article.content}}
-        {{article.author.username}}
-        <a href="{% url 'article:edit id=article.id %}">글 수정</a>
-        <a href="{% url 'article:destroy id=article.id %}">글 삭제</a>
+      {% for article in articles %}
+      <h2>{{article.title}}</h2>
+      {{article.content}} <br />
+      작성자: {{article.author.username}} <br />
+      <a href="{% url 'article:edit' id=article.id %}">글 수정</a>
+      <a href="{% url 'article:destroy' id=article.id %}">글 삭제</a>
+      <br>
+      <hr>
+      {% endfor %}
     </div>
-</body>
+
+    <span>
+        {% if articles.has_previous %}
+        <a href="?page=1">처음으로</a>
+        <a href="?page={{articles.previous_page_number}}">이전</a>
+        {% endif %}
+
+        <p>{{articles.number}} / {{articles.paginator.num_pages}}</p>
+
+        {% if articles.has_next %}
+        <a href="?page={{articles.next_page_number}}">다음</a>
+        <a href="?page={{articles.paginator.num_pages}}">마지막으로</a>
+        {% endif %}
+    </span>
+  </body>
 </html>
